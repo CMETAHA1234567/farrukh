@@ -1,61 +1,71 @@
 <script setup>
-import { ref, defineModel } from 'vue'
+import {ref} from 'vue'
+
 let field = [],
     rows = [];
 let createWindow = ref(false);
-let fieldWidth = defineModel('fieldWidth');
-let fieldHeight = defineModel('fieldHeight');
-let table = ref(false);
-let back = defineModel('back');
-function optionsOn(){
-  table.value = false;
+let fieldWidth = ref(4);
+let fieldHeight = ref(4);
+let ifTable = ref(false);
+let backImg = ref('https://celes.club/uploads/posts/2022-06/1655669027_45-celes-club-p-tekstura-travi-besshovnaya-krasivo-56.jpg')
+
+function optionsOn() {
+  ifTable.value = false;
   createWindow.value = true;
   field = [];
   rows = [];
 }
-function go(){
-  for (let i = 0; i < fieldWidth.value; i++){
+
+function go() {
+  for (let i = 0; i < fieldWidth.value; i++) {
     rows.push('')
   }
-  for (let i = 0; i < fieldHeight.value; i++){
+  for (let i = 0; i < fieldHeight.value; i++) {
     field.push(rows)
   }
 
-  table.value = true;
+  ifTable.value = true;
   createWindow.value = false;
 }
+
 </script>
 
 <template>
-<button id="optionsOn" v-on:click="optionsOn()">Create field</button>
+  <button id="optionsOn" v-on:click="optionsOn()">Create field</button>
   <div id="optionsWin" v-if="createWindow">
     <p>Input width:</p>
     <input type="number" v-model="fieldWidth"/>
     <p>Input height:</p>
     <input type="number" v-model="fieldHeight"/>
     <p>Input URL background:</p>
-    <input type="text" v-model="back"/>
+    <input type="text" v-model="backImg"/>
     <button id="optionOff" v-on:click="go()">GO!</button>
   </div>
-  <table id="table" v-if="table">
-    <tr class="str" v-for="item in field"><td v-for="item in rows"></td></tr>
-  </table>
+  <div id="fieldContainer" v-if="ifTable">
+    <table id="myTable" :style="{backgroundImage: `url(${backImg})`}">
+      <tr class="str" v-for="i in field">
+        <td v-for="i in rows"></td>
+      </tr>
+    </table>
+  </div>
 </template>
 
 <style scoped>
-#optionsWin{
+div {
   border-radius: 10px;
   border: #2c3e50 2px solid;
   margin: 10px;
   padding: 10px;
+  overflow: scroll;
 }
-td{
+
+td {
   height: 100px;
   width: 100px;
   border: black 1px solid;
+  z-index: 1;
 }
-#table{
-  background-image: url("https://sun9-80.userapi.com/impf/VqS3wbv1owdP8Sx0o4SfSnjZQ6yVmaDXbY3xbA/6o2a_Q-cFRQ.jpg?size=2160x2160&quality=96&sign=41bb9c095fcba220b6995bb8b5fb7647&type=album");
+#myTable {
   background-size: 100%;
 }
 </style>

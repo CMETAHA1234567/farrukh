@@ -1,13 +1,19 @@
 <template>
-<field></field>
+  <tokens></tokens>
+  <tracker></tracker>
+  <field></field>
 </template>
 
 <script>
 import Field from "@/components/field.vue";
+import Tokens from "@/components/tokens.vue";
+import Tracker from "@/components/tracker.vue";
 
 export default {
   name: 'App',
   components: {
+    Tracker,
+    Tokens,
     Field
   }
 }
