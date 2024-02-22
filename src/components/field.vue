@@ -1,18 +1,22 @@
 <script setup>
 import {ref} from 'vue'
 
-let field = [],
+let columns = [],
     rows = [];
-let createWindow = ref(false);
+
+let ifCreateWindow = ref(false),
+    ifTableWindow = ref(false);
+
 let fieldWidth = ref(4);
 let fieldHeight = ref(4);
-let ifTable = ref(false);
+
 let backImg = ref('https://celes.club/uploads/posts/2022-06/1655669027_45-celes-club-p-tekstura-travi-besshovnaya-krasivo-56.jpg')
 
 function optionsOn() {
-  ifTable.value = false;
-  createWindow.value = true;
-  field = [];
+  ifTableWindow.value = false;
+  ifCreateWindow.value = true;
+
+  columns = [];
   rows = [];
 }
 
@@ -21,29 +25,35 @@ function go() {
     rows.push('')
   }
   for (let i = 0; i < fieldHeight.value; i++) {
-    field.push(rows)
+    columns.push(rows)
   }
 
-  ifTable.value = true;
-  createWindow.value = false;
+  ifTableWindow.value = true;
+  ifCreateWindow.value = false;
 }
 
 </script>
 
 <template>
-  <button id="optionsOn" v-on:click="optionsOn()">Create field</button>
-  <div id="optionsWin" v-if="createWindow">
+  <button id="optionsOn" @click="optionsOn()">
+    Create field
+  </button>
+
+  <div id="optionsWin" v-if="ifCreateWindow">
     <p>Input width:</p>
     <input type="number" v-model="fieldWidth"/>
     <p>Input height:</p>
     <input type="number" v-model="fieldHeight"/>
     <p>Input URL background:</p>
     <input type="text" v-model="backImg"/>
-    <button id="optionOff" v-on:click="go()">GO!</button>
+    <button id="optionOff" @click="go()">GO!</button>
   </div>
-  <div id="fieldContainer" v-if="ifTable">
-    <table id="myTable" :style="{backgroundImage: `url(${backImg})`}">
-      <tr class="str" v-for="i in field">
+
+  <div id="fieldContainer" v-if="ifTableWindow">
+    <table id="myTable"
+           :style="{backgroundImage: `url(${backImg})`,
+           width: 100 * rows.length + 'px'}">
+      <tr class="str" v-for="i in columns">
         <td v-for="i in rows"></td>
       </tr>
     </table>
@@ -65,7 +75,9 @@ td {
   border: black 1px solid;
   z-index: 1;
 }
+
 #myTable {
   background-size: 100%;
+  overflow: scroll;
 }
 </style>
