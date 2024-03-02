@@ -1,6 +1,6 @@
 <template>
-  <tokens></tokens>
   <tracker></tracker>
+  <tokens></tokens>
   <field></field>
 </template>
 
@@ -8,6 +8,7 @@
 import Field from "@/components/field.vue";
 import Tokens from "@/components/tokens.vue";
 import Tracker from "@/components/tracker.vue";
+
 
 export default {
   name: 'App',

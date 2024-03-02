@@ -1,63 +1,83 @@
 <script setup>
 import {ref} from "vue";
+import {useStore} from "vuex";
+
+const store = useStore()
 
 const characters = ref([]);
 
 let ifCharacterOptions = ref(false);
+let ifTokenOptions = ref(false);
 
 let currentName = ref('Фаррух'),
     currentArmor = ref(10),
-    currentInit = ref(2),
-    currentPortrait = ref('https://phonoteka.org/uploads/posts/2022-09/1663290012_15-phonoteka-org-p-monakh-art-instagram-20.jpg')
+    currentPortrait = ref('https://phonoteka.org/uploads/posts/2022-09/1663290054_3-phonoteka-org-p-monakh-art-instagram-4.jpg');
 
 class Character {
-  constructor(name, armor, init, portrait) {
+  constructor(name, armor, portrait) {
     this.name = name;
     this.armor = armor;
-    this.initBonus = init;
     this.portrait = portrait;
   }
-  initiativeAssigned(){
-    let initiative = Math.floor(Math.random() * 20) + this.initBonus
-    console.log(initiative);
-    return this.initiative = initiative;
+}
+function initiativeAssigned(name){
+  let player = JSON.parse(localStorage.getItem(name))
+  store.commit('initiativeAssigned', player)
+}
+function completionCharacters(){
+  for(let i=0; i<localStorage.length; i++) {
+    let key = localStorage.key(i);
+    characters.value.push(JSON.parse(localStorage.getItem(key)))
   }
 }
-
+if (localStorage.length > 0){
+  completionCharacters()
+}
 function addCharacter() {
-  let character = new Character(currentName.value, currentArmor.value, currentInit.value, currentPortrait.value)
+  let character = new Character(currentName.value, currentArmor.value, currentPortrait.value)
   characters.value.push(character)
+  localStorage.setItem(currentName.value, JSON.stringify(character))
+  ifCharacterOptions.value = false
+  console.log(localStorage);
+}
+
+function characterOptions(){
+  ifCharacterOptions.value = true
 }
 </script>
 
 <template>
   <div>
-    <button @click="ifCharacterOptions = true">
+    <button @click="characterOptions">
       Create character
     </button>
 
     <div id="characterIcons">
       <div class="icon"
            v-for="item in characters"
-           :style="{backgroundImage: `url(${item.portrait})`}">
+           :style="{backgroundImage: `url(${item.portrait})`}"
+           @contextmenu="ifTokenOptions = true">
         <span id="iconName">{{ item.name }}</span>
-        <img id="wang" src="../assets/wang.png" @click="item.initiativeAssigned()"/>
+        <img id="wang" src="../assets/wang.png" @click.once="initiativeAssigned(item.name)"/>
         <img id="shield" src="../assets/shield.png"/>
         <span id="iconArmor">{{ item.armor }}</span>
       </div>
     </div>
 
-    <div v-if="ifCharacterOptions">
+    <div id="createWindow">
+    <div id="CharacterOptions" v-if="ifCharacterOptions">
       <p>Input name:</p>
       <input v-model="currentName">
       <p>Input armor class:</p>
       <input type="number" v-model="currentArmor">
-      <p>Input initiative bonus:</p>
-      <input type="number" v-model="currentInit">
       <p>Input icon link:</p>
       <input v-model="currentPortrait">
       <button @click="addCharacter()">Go</button>
     </div>
+    <div id="CharacterPreview" v-if="ifCharacterOptions">
+      <div id="iconPreview" :style="{backgroundImage: `url(${currentPortrait})`}"></div>
+    </div>
+  </div>
   </div>
 </template>
 
@@ -114,5 +134,19 @@ div {
   top: -25px;
   right: 0;
   cursor: pointer;
+}
+#CharacterOptions {
+  width: 59%;
+}
+#CharacterPreview {
+  width: 39%;
+}
+#createWindow {
+  display: flex;
+}
+#iconPreview{
+  border-radius: 50%;
+  aspect-ratio: 1/1;
+  background-size: 100%;
 }
 </style>
