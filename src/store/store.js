@@ -21,7 +21,7 @@ const store = createStore({
             state.initiativeList.push(payLoad)
         },
         nextTurn(state){
-            state.initiativeList.unshift(state.initiativeList.pop())
+            state.initiativeList.push(state.initiativeList.shift())
         }
     }
 })

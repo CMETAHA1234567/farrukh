@@ -1,11 +1,13 @@
 <script setup>
 import {ref} from 'vue'
+import Cell from "@/components/cell.vue";
 
 let columns = [],
     rows = [];
 
 let ifCreateWindow = ref(false),
     ifTableWindow = ref(false);
+
 
 let fieldWidth = ref(4);
 let fieldHeight = ref(4);
@@ -30,8 +32,8 @@ function go() {
 
   ifTableWindow.value = true;
   ifCreateWindow.value = false;
-}
 
+}
 </script>
 
 <template>
@@ -53,8 +55,10 @@ function go() {
     <table id="myTable"
            :style="{backgroundImage: `url(${backImg})`,
            width: 100 * rows.length + 'px'}">
-      <tr class="str" v-for="i in columns">
-        <td v-for="i in rows"></td>
+      <tr class="str" v-for="item in columns">
+        <td v-for="item in rows">
+            <cell></cell>
+        </td>
       </tr>
     </table>
   </div>

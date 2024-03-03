@@ -11,13 +11,15 @@ let ifTokenOptions = ref(false);
 
 let currentName = ref('Фаррух'),
     currentArmor = ref(10),
-    currentPortrait = ref('https://phonoteka.org/uploads/posts/2022-09/1663290054_3-phonoteka-org-p-monakh-art-instagram-4.jpg');
+    currentPortrait = ref('https://phonoteka.org/uploads/posts/2022-09/1663290054_3-phonoteka-org-p-monakh-art-instagram-4.jpg'),
+    currentId = ref(1)
 
 class Character {
-  constructor(name, armor, portrait) {
+  constructor(name, armor, portrait, id) {
     this.name = name;
     this.armor = armor;
     this.portrait = portrait;
+    this.id = id;
   }
 }
 function initiativeAssigned(name){
@@ -34,10 +36,11 @@ if (localStorage.length > 0){
   completionCharacters()
 }
 function addCharacter() {
-  let character = new Character(currentName.value, currentArmor.value, currentPortrait.value)
+  let character = new Character(currentName.value, currentArmor.value, currentPortrait.value, currentId.value)
   characters.value.push(character)
   localStorage.setItem(currentName.value, JSON.stringify(character))
   ifCharacterOptions.value = false
+  currentId.value++
   console.log(localStorage);
 }
 
