@@ -3,8 +3,8 @@ console.log(1)
 import {useStore} from "vuex";
 import {ref} from "vue";
 
-let store = useStore()
-let initiativeList = store.getters.getArray
+const store = useStore(),
+    initiativeList = store.getters.getArray;
 
 let currentPortrait = ref()
 let isFull = ref(false)

@@ -11,15 +11,13 @@ let ifTokenOptions = ref(false);
 
 let currentName = ref('Фаррух'),
     currentArmor = ref(10),
-    currentPortrait = ref('https://phonoteka.org/uploads/posts/2022-09/1663290054_3-phonoteka-org-p-monakh-art-instagram-4.jpg'),
-    currentId = ref(1)
+    currentPortrait = ref('https://phonoteka.org/uploads/posts/2022-09/1663290054_3-phonoteka-org-p-monakh-art-instagram-4.jpg');
 
 class Character {
-  constructor(name, armor, portrait, id) {
+  constructor(name, armor, portrait) {
     this.name = name;
     this.armor = armor;
     this.portrait = portrait;
-    this.id = id;
   }
 }
 function initiativeAssigned(name){
@@ -29,28 +27,32 @@ function initiativeAssigned(name){
 function completionCharacters(){
   for(let i=0; i<localStorage.length; i++) {
     let key = localStorage.key(i);
+    if (key === 'fields'){
+      continue
+    }
     characters.value.push(JSON.parse(localStorage.getItem(key)))
   }
 }
-if (localStorage.length > 0){
-  completionCharacters()
-}
 function addCharacter() {
-  let character = new Character(currentName.value, currentArmor.value, currentPortrait.value, currentId.value)
+  let character = new Character(currentName.value, currentArmor.value, currentPortrait.value)
   characters.value.push(character)
   localStorage.setItem(currentName.value, JSON.stringify(character))
   ifCharacterOptions.value = false
-  currentId.value++
   console.log(localStorage);
 }
 
 function characterOptions(){
   ifCharacterOptions.value = true
 }
+
+if (localStorage.length > 0){
+  completionCharacters()
+}
+
 </script>
 
 <template>
-  <div>
+  <div id="body">
     <button @click="characterOptions">
       Create character
     </button>
@@ -67,7 +69,7 @@ function characterOptions(){
       </div>
     </div>
 
-    <div id="createWindow">
+    <div id="createWindow" v-if="ifCharacterOptions">
     <div id="CharacterOptions" v-if="ifCharacterOptions">
       <p>Input name:</p>
       <input v-model="currentName">
@@ -85,6 +87,22 @@ function characterOptions(){
 </template>
 
 <style scoped>
+button{
+  background: #98a678;
+  border-radius: 10px;
+  border: 0;
+  height: 2em;
+  width: 10em;
+  margin: 2px;
+  cursor: pointer;
+}
+button:hover{
+  background: #98c178;
+}
+#body{
+  background: #ece4d9;
+  box-shadow: -10px 5px 5px #ece4d940 ;
+}
 div {
   border-radius: 10px;
   border: #2c3e50 2px solid;
@@ -106,7 +124,9 @@ div {
 }
 
 #characterIcons {
-  display: flex;
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 30px));
 }
 
 #shield {
@@ -146,6 +166,7 @@ div {
 }
 #createWindow {
   display: flex;
+  border: 0;
 }
 #iconPreview{
   border-radius: 50%;

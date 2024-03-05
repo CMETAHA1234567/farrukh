@@ -1,8 +1,8 @@
 <script setup>
 import {useStore} from "vuex";
 
-let store = useStore()
- const initiativeList = store.getters.getArray
+const store = useStore(),
+    initiativeList = store.getters.getArray;
 function turn(){
 store.commit('nextTurn')
 }
@@ -10,7 +10,7 @@ store.commit('nextTurn')
 
 <template>
 <button @click="turn()">Next turn</button>
-  <div id="initIcon" v-if="initiativeList.length != 0">
+  <div id="initIcons" v-if="initiativeList.length != 0">
 <div class="icon"
      v-for="item  in initiativeList"
      :style="{backgroundImage: `url(${item.portrait})`}"
@@ -21,24 +21,38 @@ store.commit('nextTurn')
 </template>
 
 <style scoped>
+button{
+  background: #98a678;
+  border-radius: 10px;
+  border: 0;
+  height: 2em;
+  width: 10em;
+  margin: 2px;
+  cursor: pointer;
+}
+button:hover{
+  background: #98c178;
+}
 div {
   border-radius: 10px;
   border: #2c3e50 2px solid;
   margin: 10px;
   padding: 10px;
 }
-#initIcon{
+#initIcons{
   display: flex;
+  background: #ece4d9;
+  box-shadow: -10px 5px 5px #ece4d940 ;
 }
 .icon {
   background-size: 100%;
   margin-top: 25px;
-  z-index: 2;
   display: flex;
   border: black 1px solid;
-  height: 100px;
-  width: 100px;
-  border-radius: 100px;
+  min-height: 100px;
+  height: 8em;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
   justify-content: center;
   position: relative;
 }

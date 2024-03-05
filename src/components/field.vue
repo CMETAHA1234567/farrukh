@@ -1,28 +1,78 @@
 <script setup>
-import {ref} from 'vue'
+import {ref} from 'vue';
 import Cell from "@/components/cell.vue";
 
 let columns = [],
     rows = [];
 
-let ifCreateWindow = ref(false),
+const ifCreateWindow = ref(false),
     ifTableWindow = ref(false);
 
+const fieldName = ref('Grass'),
+    fieldWidth = ref(4),
+    fieldHeight = ref(4),
+    backImg = ref('https://celes.club/uploads/posts/2022-06/1655669027_45-celes-club-p-tekstura-travi-besshovnaya-krasivo-56.jpg');
 
-let fieldWidth = ref(4);
-let fieldHeight = ref(4);
+const fields = ref([]),
+    mapFields = new Map();
 
-let backImg = ref('https://celes.club/uploads/posts/2022-06/1655669027_45-celes-club-p-tekstura-travi-besshovnaya-krasivo-56.jpg')
 
+class Field {
+  constructor(name, width, height, img) {
+    this.name = name;
+    this.width = width;
+    this.height = height;
+    this.img = img;
+  }
+}
+function select(name){
+  let map = mapFields.get(name)
+  fieldName.value = map.name;
+  fieldWidth.value = map.width;
+  fieldHeight.value = map.height;
+  backImg.value = map.img;
+  console.log(map.name);
+}
+function onInput(){
+  columns = [];
+  rows = [];
+
+  for (let i = 0; i < fieldWidth.value; i++) {
+    rows.push('')
+  }
+  for (let i = 0; i < fieldHeight.value; i++) {
+    columns.push(rows)
+  }
+}
 function optionsOn() {
   ifTableWindow.value = false;
   ifCreateWindow.value = true;
 
   columns = [];
   rows = [];
+
+  for (let i = 0; i < fieldWidth.value; i++) {
+    rows.push('')
+  }
+  for (let i = 0; i < fieldHeight.value; i++) {
+    columns.push(rows)
+  }
 }
 
+function completionFields(){
+  let allFields = JSON.parse(localStorage.getItem('fields')),
+      field;
+  for (let i = 0; i < allFields.length; i++){
+    field = allFields[i];
+    fields.value.push(field);
+    mapFields.set(`${field.name}`, field);
+    console.log(mapFields.get(field.name))
+  }
+}
 function go() {
+  columns = [];
+  rows = [];
+
   for (let i = 0; i < fieldWidth.value; i++) {
     rows.push('')
   }
@@ -33,6 +83,13 @@ function go() {
   ifTableWindow.value = true;
   ifCreateWindow.value = false;
 
+  let field = new Field(fieldName.value, fieldWidth.value, fieldHeight.value, backImg.value)
+  fields.value.push(field);
+  localStorage.setItem('fields', JSON.stringify(fields.value))
+}
+let key = localStorage.getItem('fields')
+if (key) {
+  completionFields()
 }
 </script>
 
@@ -41,23 +98,43 @@ function go() {
     Create field
   </button>
 
-  <div id="optionsWin" v-if="ifCreateWindow">
+  <div id="fieldOptions" v-if="ifCreateWindow">
+  <div id="optionsWin">
+    <p>Select field or crate new:</p>
+    <select @select="console.log(1)">
+      <option v-for="item in fields" >
+        {{item.name}} ({{item.width}} X {{item.height}})
+      </option>
+    </select>
+    <p>Input name:</p>
+    <input v-model="fieldName"/>
     <p>Input width:</p>
-    <input type="number" v-model="fieldWidth"/>
+    <input type="number" v-model="fieldWidth" @input="onInput()"/>
     <p>Input height:</p>
-    <input type="number" v-model="fieldHeight"/>
+    <input type="number" v-model="fieldHeight" @input="onInput()"/>
     <p>Input URL background:</p>
     <input type="text" v-model="backImg"/>
     <button id="optionOff" @click="go()">GO!</button>
+  </div>
+    <div id="preview">
+      <table id="myTablePreview"
+             :style="{backgroundImage: `url(${backImg})`,
+           width: 2 * rows.length + 'em'}">
+        <tr class="str" v-for="item in columns">
+          <td id="td" v-for="item in rows">
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
 
   <div id="fieldContainer" v-if="ifTableWindow">
     <table id="myTable"
            :style="{backgroundImage: `url(${backImg})`,
-           width: 100 * rows.length + 'px'}">
+           width: 7 * rows.length + 'em'}">
       <tr class="str" v-for="item in columns">
         <td v-for="item in rows">
-            <cell></cell>
+          <cell></cell>
         </td>
       </tr>
     </table>
@@ -65,23 +142,61 @@ function go() {
 </template>
 
 <style scoped>
-div {
+#optionsWin{
+  padding: 5px;
+  background: #ece4d9;
   border-radius: 10px;
-  border: #2c3e50 2px solid;
-  margin: 10px;
-  padding: 10px;
-  overflow: scroll;
+  box-shadow: -10px 5px 5px #ece4d940 ;
+  width: 30%;
 }
-
 td {
   height: 100px;
   width: 100px;
   border: black 1px solid;
-  z-index: 1;
 }
-
 #myTable {
   background-size: 100%;
   overflow: scroll;
+}
+button{
+  background: #98a678;
+  border-radius: 10px;
+  border: 0;
+  height: 2em;
+  width: 10em;
+  margin: 2px;
+  cursor: pointer;
+}
+button:hover{
+  background: #98c178;
+}
+input{
+  border: 1px darkslategrey solid;
+  border-radius: 5px;
+  height: 2em;
+  width: 20em;
+}
+#fieldOptions{
+  display: flex;
+}
+#optionsWin{
+  border: black 1px solid;
+  height: 30em;
+}
+#preview{
+  padding: 10px;
+  background: #ece4d9;
+  border-radius: 10px;
+  box-shadow: -10px 5px 5px #ece4d940 ;
+  margin-left: 5px;
+  width: 69%;
+  overflow: scroll scroll;
+  height: 30em;
+}
+#td{
+  width: 2em;
+  height: 2em;
+}
+#myTablePreview{
 }
 </style>
