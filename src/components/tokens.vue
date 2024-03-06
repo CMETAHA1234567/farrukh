@@ -38,7 +38,6 @@ function addCharacter() {
   characters.value.push(character)
   localStorage.setItem(currentName.value, JSON.stringify(character))
   ifCharacterOptions.value = false
-  console.log(localStorage);
 }
 
 function characterOptions(){

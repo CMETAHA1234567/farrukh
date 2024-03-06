@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from 'vue';
+import {ref, watch} from 'vue';
 import Cell from "@/components/cell.vue";
 
 let columns = [],
@@ -14,7 +14,7 @@ const fieldName = ref('Grass'),
     backImg = ref('https://celes.club/uploads/posts/2022-06/1655669027_45-celes-club-p-tekstura-travi-besshovnaya-krasivo-56.jpg');
 
 const fields = ref([]),
-    mapFields = new Map();
+    currentField = ref();
 
 
 class Field {
@@ -25,15 +25,8 @@ class Field {
     this.img = img;
   }
 }
-function select(name){
-  let map = mapFields.get(name)
-  fieldName.value = map.name;
-  fieldWidth.value = map.width;
-  fieldHeight.value = map.height;
-  backImg.value = map.img;
-  console.log(map.name);
-}
-function onInput(){
+
+watch([fieldWidth, fieldHeight], () => {
   columns = [];
   rows = [];
 
@@ -43,7 +36,8 @@ function onInput(){
   for (let i = 0; i < fieldHeight.value; i++) {
     columns.push(rows)
   }
-}
+})
+
 function optionsOn() {
   ifTableWindow.value = false;
   ifCreateWindow.value = true;
@@ -65,8 +59,6 @@ function completionFields(){
   for (let i = 0; i < allFields.length; i++){
     field = allFields[i];
     fields.value.push(field);
-    mapFields.set(`${field.name}`, field);
-    console.log(mapFields.get(field.name))
   }
 }
 function go() {
@@ -91,6 +83,14 @@ let key = localStorage.getItem('fields')
 if (key) {
   completionFields()
 }
+
+function onChange(){
+  let field = JSON.parse(currentField.value)
+  fieldName.value = field.name;
+  fieldWidth.value = field.width;
+  fieldHeight.value = field.height;
+  backImg.value = field.img;
+}
 </script>
 
 <template>
@@ -101,17 +101,18 @@ if (key) {
   <div id="fieldOptions" v-if="ifCreateWindow">
   <div id="optionsWin">
     <p>Select field or crate new:</p>
-    <select @select="console.log(1)">
+    <select v-model="currentField"
+            @change="onChange()">
       <option v-for="item in fields" >
-        {{item.name}} ({{item.width}} X {{item.height}})
+        {{ item }}
       </option>
     </select>
     <p>Input name:</p>
     <input v-model="fieldName"/>
     <p>Input width:</p>
-    <input type="number" v-model="fieldWidth" @input="onInput()"/>
+    <input type="number" v-model="fieldWidth"/>
     <p>Input height:</p>
-    <input type="number" v-model="fieldHeight" @input="onInput()"/>
+    <input type="number" v-model="fieldHeight"/>
     <p>Input URL background:</p>
     <input type="text" v-model="backImg"/>
     <button id="optionOff" @click="go()">GO!</button>

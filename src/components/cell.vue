@@ -1,38 +1,58 @@
 <script setup>
-console.log(1)
 import {useStore} from "vuex";
-import {ref} from "vue";
+import {ref, watch} from "vue";
 
 const store = useStore(),
     initiativeList = store.getters.getArray;
 
 let currentPortrait = ref()
+let currentName = ref()
 let isFull = ref(false)
+let currentBorder = ref('1px solid black')
+
 
 let ifAddOnField = ref(false);
 
 let addOnFieldX = ref(0),
     addOnFieldY = ref(0);
 
-function addOnField(event){
+function addOnField(event) {
   addOnFieldY.value = event.pageY + 'px';
   addOnFieldX.value = event.pageX + 'px';
   ifAddOnField.value = true
 }
-function addOnFieldCharacters (item){
+
+function addOnFieldCharacters(item) {
   currentPortrait.value = item.portrait
+  currentName.value = item.name
   ifAddOnField.value = false
-  console.log(currentPortrait.value)
   isFull.value = true
+  if (initiativeList[0].name === currentName.value) {
+    currentBorder.value = '3px solid red'
+  } else {
+    currentBorder.value = '1px solid black'
+  }
 }
+
+watch(
+    () => initiativeList,
+    () => {
+      if (initiativeList.length === 0) return
+      if (initiativeList[0].name === currentName.value) {
+        currentBorder.value = '3px solid red'
+      } else {
+        currentBorder.value = '1px solid black'
+      }
+    }, {deep: true})
 </script>
 
 <template>
   <div @contextmenu.prevent="addOnField($event)"
        id="eventCatch">
     <div id="icon"
-         :style="{backgroundImage: `url(${currentPortrait})`}"
-         v-if="isFull">
+         v-if="isFull"
+         :style="{backgroundImage: `url(${currentPortrait})`,
+         border: currentBorder}">
     </div>
   </div>
   <div id="AddOnField"
@@ -42,14 +62,13 @@ function addOnFieldCharacters (item){
     <p v-for="item in initiativeList"
        class="addOnFieldCharacters"
        @click="addOnFieldCharacters(item)">
-      {{item.name}}</p>
+      {{ item.name }}</p>
   </div>
 </template>
 
 <style scoped>
-#AddOnField{
+#AddOnField {
   border-radius: 0;
-  border: black 1px solid;
   margin: 0;
   padding: 5px;
   overflow: hidden scroll;
@@ -59,18 +78,22 @@ function addOnFieldCharacters (item){
   position: absolute;
   background: aliceblue;
 }
+
 .addOnFieldCharacters {
   font-size: 10px;
   cursor: pointer;
   padding: 2px;
 }
+
 .addOnFieldCharacters:hover {
   background: bisque;
 }
+
 #eventCatch {
   width: 100%;
   height: 100%;
 }
+
 #icon {
   margin: 0;
   background-size: 100%;
