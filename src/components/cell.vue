@@ -5,15 +5,15 @@ import {ref, watch} from "vue";
 const store = useStore(),
     initiativeList = store.getters.getArray;
 
-let currentPortrait = ref()
-let currentName = ref()
-let isFull = ref(false)
-let currentBorder = ref('1px solid black')
+const currentPortrait = ref(),
+    currentName = ref(),
+    isFull = ref(false),
+    currentBorder = ref('1px solid black');
 
 
-let ifAddOnField = ref(false);
+const ifAddOnField = ref(false);
 
-let addOnFieldX = ref(0),
+const addOnFieldX = ref(0),
     addOnFieldY = ref(0);
 
 function addOnField(event) {
@@ -42,6 +42,10 @@ watch(
         currentBorder.value = '3px solid red'
       } else {
         currentBorder.value = '1px solid black'
+      }
+      let deleted = store.getters.getDeleteInit
+      if (deleted == currentName.value){
+        isFull.value = false
       }
     }, {deep: true})
 </script>

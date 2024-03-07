@@ -85,7 +85,7 @@ if (key) {
 }
 
 function onChange(){
-  let field = JSON.parse(currentField.value)
+  let field = currentField.value
   fieldName.value = field.name;
   fieldWidth.value = field.width;
   fieldHeight.value = field.height;
@@ -103,8 +103,9 @@ function onChange(){
     <p>Select field or crate new:</p>
     <select v-model="currentField"
             @change="onChange()">
-      <option v-for="item in fields" >
-        {{ item }}
+      <option v-for="item in fields"
+              :value="item">
+        {{ item.name }}
       </option>
     </select>
     <p>Input name:</p>

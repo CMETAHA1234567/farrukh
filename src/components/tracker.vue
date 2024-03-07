@@ -3,6 +3,11 @@ import {useStore} from "vuex";
 
 const store = useStore(),
     initiativeList = store.getters.getArray;
+
+function deleteInit(item){
+  store.commit('deleteCharacter', item)
+  store.commit('addDeletedInit', item)
+}
 function turn(){
 store.commit('nextTurn')
 }
@@ -16,6 +21,7 @@ store.commit('nextTurn')
      :style="{backgroundImage: `url(${item.portrait})`}"
      :key="item">
   <span id="iconName">{{ item.name }}</span>
+  <img id="skull" src="../assets/skull.png" @click="deleteInit(item)"/>
 </div>
   </div>
 </template>
@@ -59,5 +65,12 @@ div {
 #iconName {
   position: absolute;
   top: -25px;
+}
+#skull {
+  height: 25px;
+  position: absolute;
+  top: -25px;
+  right: 0;
+  cursor: pointer;
 }
 </style>

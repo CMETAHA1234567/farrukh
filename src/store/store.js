@@ -3,7 +3,8 @@ import { createStore } from "vuex"
 const store = createStore({
     state:{
         name: "Vue",
-        initiativeList: []
+        initiativeList: [],
+        deletedInit: '1',
     },
     getters: {
        getName(state){
@@ -11,7 +12,10 @@ const store = createStore({
        },
        getArray(state){
            return state.initiativeList
-       }
+       },
+        getDeleteInit(state){
+           return state.deletedInit
+        }
     },
     mutations: {
         setName(state, payLoad){
@@ -22,6 +26,18 @@ const store = createStore({
         },
         nextTurn(state){
             state.initiativeList.push(state.initiativeList.shift())
+        },
+        deleteCharacter (state, payLoad) {
+            for (let i = 0; i < state.initiativeList.length; i++){
+                if (state.initiativeList[i].name === payLoad.name) {
+                    state.initiativeList.splice(i, 1)
+                }
+            }
+        },
+        addDeletedInit (state, payLoad) {
+            state.deletedInit = payLoad.name
+            /*console.log(payLoad.name)
+            console.log(store.getters.getDeleteInit)*/
         }
     }
 })

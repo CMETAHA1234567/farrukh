@@ -6,10 +6,10 @@ const store = useStore()
 
 const characters = ref([]);
 
-let ifCharacterOptions = ref(false);
-let ifTokenOptions = ref(false);
+const ifCharacterOptions = ref(false),
+    ifTokenOptions = ref(false);
 
-let currentName = ref('Фаррух'),
+const currentName = ref('Фаррух'),
     currentArmor = ref(10),
     currentPortrait = ref('https://phonoteka.org/uploads/posts/2022-09/1663290054_3-phonoteka-org-p-monakh-art-instagram-4.jpg');
 
@@ -20,19 +20,22 @@ class Character {
     this.portrait = portrait;
   }
 }
-function initiativeAssigned(name){
+
+function initiativeAssigned(name) {
   let player = JSON.parse(localStorage.getItem(name))
   store.commit('initiativeAssigned', player)
 }
-function completionCharacters(){
-  for(let i=0; i<localStorage.length; i++) {
+
+function completionCharacters() {
+  for (let i = 0; i < localStorage.length; i++) {
     let key = localStorage.key(i);
-    if (key === 'fields'){
+    if (key === 'fields') {
       continue
     }
     characters.value.push(JSON.parse(localStorage.getItem(key)))
   }
 }
+
 function addCharacter() {
   let character = new Character(currentName.value, currentArmor.value, currentPortrait.value)
   characters.value.push(character)
@@ -40,11 +43,11 @@ function addCharacter() {
   ifCharacterOptions.value = false
 }
 
-function characterOptions(){
+function characterOptions() {
   ifCharacterOptions.value = true
 }
 
-if (localStorage.length > 0){
+if (localStorage.length > 0) {
   completionCharacters()
 }
 
@@ -62,31 +65,31 @@ if (localStorage.length > 0){
            :style="{backgroundImage: `url(${item.portrait})`}"
            @contextmenu="ifTokenOptions = true">
         <span id="iconName">{{ item.name }}</span>
-        <img id="wang" src="../assets/wang.png" @click.once="initiativeAssigned(item.name)"/>
+        <img id="wang" src="../assets/wang.png" @click="initiativeAssigned(item.name)"/>
         <img id="shield" src="../assets/shield.png"/>
         <span id="iconArmor">{{ item.armor }}</span>
       </div>
     </div>
 
     <div id="createWindow" v-if="ifCharacterOptions">
-    <div id="CharacterOptions" v-if="ifCharacterOptions">
-      <p>Input name:</p>
-      <input v-model="currentName">
-      <p>Input armor class:</p>
-      <input type="number" v-model="currentArmor">
-      <p>Input icon link:</p>
-      <input v-model="currentPortrait">
-      <button @click="addCharacter()">Go</button>
+      <div id="CharacterOptions" v-if="ifCharacterOptions">
+        <p>Input name:</p>
+        <input v-model="currentName">
+        <p>Input armor class:</p>
+        <input type="number" v-model="currentArmor">
+        <p>Input icon link:</p>
+        <input v-model="currentPortrait">
+        <button @click="addCharacter()">Go</button>
+      </div>
+      <div id="CharacterPreview" v-if="ifCharacterOptions">
+        <div id="iconPreview" :style="{backgroundImage: `url(${currentPortrait})`}"></div>
+      </div>
     </div>
-    <div id="CharacterPreview" v-if="ifCharacterOptions">
-      <div id="iconPreview" :style="{backgroundImage: `url(${currentPortrait})`}"></div>
-    </div>
-  </div>
   </div>
 </template>
 
 <style scoped>
-button{
+button {
   background: #98a678;
   border-radius: 10px;
   border: 0;
@@ -95,13 +98,16 @@ button{
   margin: 2px;
   cursor: pointer;
 }
-button:hover{
+
+button:hover {
   background: #98c178;
 }
-#body{
+
+#body {
   background: #ece4d9;
-  box-shadow: -10px 5px 5px #ece4d940 ;
+  box-shadow: -10px 5px 5px #ece4d940;
 }
+
 div {
   border-radius: 10px;
   border: #2c3e50 2px solid;
@@ -157,17 +163,21 @@ div {
   right: 0;
   cursor: pointer;
 }
+
 #CharacterOptions {
   width: 59%;
 }
+
 #CharacterPreview {
   width: 39%;
 }
+
 #createWindow {
   display: flex;
   border: 0;
 }
-#iconPreview{
+
+#iconPreview {
   border-radius: 50%;
   aspect-ratio: 1/1;
   background-size: 100%;
