@@ -14,7 +14,9 @@ store.commit('nextTurn')
 </script>
 
 <template>
-<button @click="turn()">Next turn</button>
+<button @click="turn()"
+        v-if="initiativeList.length != 0">
+  Next turn</button>
   <div id="initIcons" v-if="initiativeList.length != 0">
 <div class="icon"
      v-for="item  in initiativeList"

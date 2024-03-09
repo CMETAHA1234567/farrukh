@@ -11,7 +11,8 @@ const ifCreateWindow = ref(false),
 const fieldName = ref('Grass'),
     fieldWidth = ref(4),
     fieldHeight = ref(4),
-    backImg = ref('https://celes.club/uploads/posts/2022-06/1655669027_45-celes-club-p-tekstura-travi-besshovnaya-krasivo-56.jpg');
+    backImg = ref('https://celes.club/uploads/posts/2022-06/1655669027_45-celes-club-p-tekstura-travi-besshovnaya-krasivo-56.jpg'),
+    listName = `${fieldName.value} (${fieldWidth.value} X ${fieldHeight.value})`;
 
 const fields = ref([]),
     currentField = ref();
@@ -37,36 +38,34 @@ function createField() {
     columns.push(rows)
   }
 }
-
-watch([fieldWidth, fieldHeight], () => {
-  createField()
-})
-
 function optionsOn() {
   ifTableWindow.value = false;
   ifCreateWindow.value = true;
   createField()
 }
-
-function completionFields() {
-  let allFields = JSON.parse(localStorage.getItem('fields')),
-      field;
-  for (let i = 0; i < allFields.length; i++) {
-    field = allFields[i];
-    fields.value.push(field);
-  }
-}
-
+watch([fieldWidth, fieldHeight], () => {
+  createField()
+})
 function go() {
   createField()
 
   ifTableWindow.value = true;
   ifCreateWindow.value = false;
 
-  let field = new Field(fieldName.value, fieldWidth.value, fieldHeight.value, backImg.value)
-  fields.value.push(field);
+  let newField = new Field(listName, fieldWidth.value, fieldHeight.value, backImg.value)
+  fields.value.push(newField);
   localStorage.setItem('fields', JSON.stringify(fields.value))
 }
+
+
+function completionFields() {
+  let allFields = JSON.parse(localStorage.getItem('fields'));
+  allFields.forEach((item) => {
+    fields.value.push(item)
+  })
+}
+
+
 
 let key = localStorage.getItem('fields')
 if (key) {
@@ -94,7 +93,7 @@ function onChange() {
               @change="onChange()">
         <option v-for="item in fields"
                 :value="item">
-          {{ item.name }} ({{item.width}} X {{item.height}})
+          {{ item.name }}
         </option>
       </select>
       <p>Input name:</p>

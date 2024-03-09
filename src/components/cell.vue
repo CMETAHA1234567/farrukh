@@ -33,7 +33,24 @@ function addOnFieldCharacters(item) {
     currentBorder.value = '1px solid black'
   }
 }
-
+function onDragStart (ev) {
+  ev.dataTransfer.setData('dragCharacter', JSON.stringify({
+    portrait: currentPortrait.value,
+    name: currentName.value,
+    border: currentBorder.value
+  }))
+}
+function onDragover(ev) {
+  ev.dataTransfer.dropEffect = "move";
+  isFull.value = false
+}
+function onDrop (ev) {
+  let character = JSON.parse(ev.dataTransfer.getData('dragCharacter'));
+  isFull.value = true;
+  currentPortrait.value = character.portrait;
+  currentName.value = character.name;
+  currentBorder.value = character.border;
+}
 watch(
     () => initiativeList,
     () => {
@@ -52,11 +69,15 @@ watch(
 
 <template>
   <div @contextmenu.prevent="addOnField($event)"
-       id="eventCatch">
+       id="eventCatch"
+       @dragover.prevent="onDragover($event)"
+       @drop.prevent="onDrop($event)">
     <div id="icon"
          v-if="isFull"
          :style="{backgroundImage: `url(${currentPortrait})`,
-         border: currentBorder}">
+         border: currentBorder}"
+         @dragstart="onDragStart($event)"
+         draggable="true">
     </div>
   </div>
   <div id="AddOnField"
@@ -106,7 +127,7 @@ watch(
   border: black 1px solid;
   height: 100%;
   width: 100%;
-  border-radius: 100px;
+  border-radius: 50%;
   justify-content: center;
   overflow: hidden;
 }
