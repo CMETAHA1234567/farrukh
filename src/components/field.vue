@@ -26,7 +26,7 @@ class Field {
   }
 }
 
-watch([fieldWidth, fieldHeight], () => {
+function createField() {
   columns = [];
   rows = [];
 
@@ -36,41 +36,29 @@ watch([fieldWidth, fieldHeight], () => {
   for (let i = 0; i < fieldHeight.value; i++) {
     columns.push(rows)
   }
+}
+
+watch([fieldWidth, fieldHeight], () => {
+  createField()
 })
 
 function optionsOn() {
   ifTableWindow.value = false;
   ifCreateWindow.value = true;
-
-  columns = [];
-  rows = [];
-
-  for (let i = 0; i < fieldWidth.value; i++) {
-    rows.push('')
-  }
-  for (let i = 0; i < fieldHeight.value; i++) {
-    columns.push(rows)
-  }
+  createField()
 }
 
-function completionFields(){
+function completionFields() {
   let allFields = JSON.parse(localStorage.getItem('fields')),
       field;
-  for (let i = 0; i < allFields.length; i++){
+  for (let i = 0; i < allFields.length; i++) {
     field = allFields[i];
     fields.value.push(field);
   }
 }
-function go() {
-  columns = [];
-  rows = [];
 
-  for (let i = 0; i < fieldWidth.value; i++) {
-    rows.push('')
-  }
-  for (let i = 0; i < fieldHeight.value; i++) {
-    columns.push(rows)
-  }
+function go() {
+  createField()
 
   ifTableWindow.value = true;
   ifCreateWindow.value = false;
@@ -79,12 +67,13 @@ function go() {
   fields.value.push(field);
   localStorage.setItem('fields', JSON.stringify(fields.value))
 }
+
 let key = localStorage.getItem('fields')
 if (key) {
   completionFields()
 }
 
-function onChange(){
+function onChange() {
   let field = currentField.value
   fieldName.value = field.name;
   fieldWidth.value = field.width;
@@ -99,25 +88,25 @@ function onChange(){
   </button>
 
   <div id="fieldOptions" v-if="ifCreateWindow">
-  <div id="optionsWin">
-    <p>Select field or crate new:</p>
-    <select v-model="currentField"
-            @change="onChange()">
-      <option v-for="item in fields"
-              :value="item">
-        {{ item.name }}
-      </option>
-    </select>
-    <p>Input name:</p>
-    <input v-model="fieldName"/>
-    <p>Input width:</p>
-    <input type="number" v-model="fieldWidth"/>
-    <p>Input height:</p>
-    <input type="number" v-model="fieldHeight"/>
-    <p>Input URL background:</p>
-    <input type="text" v-model="backImg"/>
-    <button id="optionOff" @click="go()">GO!</button>
-  </div>
+    <div id="optionsWin">
+      <p>Select field or crate new:</p>
+      <select v-model="currentField"
+              @change="onChange()">
+        <option v-for="item in fields"
+                :value="item">
+          {{ item.name }} ({{item.width}} X {{item.height}})
+        </option>
+      </select>
+      <p>Input name:</p>
+      <input v-model="fieldName"/>
+      <p>Input width:</p>
+      <input type="number" v-model="fieldWidth"/>
+      <p>Input height:</p>
+      <input type="number" v-model="fieldHeight"/>
+      <p>Input URL background:</p>
+      <input type="text" v-model="backImg"/>
+      <button id="optionOff" @click="go()">GO!</button>
+    </div>
     <div id="preview">
       <table id="myTablePreview"
              :style="{backgroundImage: `url(${backImg})`,
@@ -144,23 +133,26 @@ function onChange(){
 </template>
 
 <style scoped>
-#optionsWin{
+#optionsWin {
   padding: 5px;
   background: #ece4d9;
   border-radius: 10px;
-  box-shadow: -10px 5px 5px #ece4d940 ;
+  box-shadow: -10px 5px 5px #ece4d940;
   width: 30%;
 }
+
 td {
   height: 100px;
   width: 100px;
   border: black 1px solid;
 }
+
 #myTable {
   background-size: 100%;
   overflow: scroll;
 }
-button{
+
+button {
   background: #98a678;
   border-radius: 10px;
   border: 0;
@@ -169,36 +161,43 @@ button{
   margin: 2px;
   cursor: pointer;
 }
-button:hover{
+
+button:hover {
   background: #98c178;
 }
-input{
+
+input {
   border: 1px darkslategrey solid;
   border-radius: 5px;
   height: 2em;
   width: 20em;
 }
-#fieldOptions{
+
+#fieldOptions {
   display: flex;
 }
-#optionsWin{
+
+#optionsWin {
   border: black 1px solid;
   height: 30em;
 }
-#preview{
+
+#preview {
   padding: 10px;
   background: #ece4d9;
   border-radius: 10px;
-  box-shadow: -10px 5px 5px #ece4d940 ;
+  box-shadow: -10px 5px 5px #ece4d940;
   margin-left: 5px;
   width: 69%;
   overflow: scroll scroll;
   height: 30em;
 }
-#td{
+
+#td {
   width: 2em;
   height: 2em;
 }
-#myTablePreview{
+
+#myTablePreview {
 }
 </style>
