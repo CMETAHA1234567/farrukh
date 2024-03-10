@@ -2,9 +2,12 @@ import { createStore } from "vuex"
 
 const store = createStore({
     state:{
-        name: "Vue",
         initiativeList: [],
         deletedInit: '1',
+        columns: [],
+        rows: [],
+        fieldMapBackground: 'https://celes.club/uploads/posts/2022-06/1655669027_45-celes-club-p-tekstura-travi-besshovnaya-krasivo-56.jpg',
+        ifTableWindow: true,
     },
     getters: {
        getName(state){
@@ -15,12 +18,21 @@ const store = createStore({
        },
         getDeleteInit(state){
            return state.deletedInit
+        },
+        getColumns(state){
+           return state.columns
+        },
+        getRows(state){
+           return state.rows
+        },
+        getIfTableWindow(state){
+           return state.ifTableWindow
+        },
+        getFieldMapBackground(state){
+           return state.fieldMapBackground
         }
     },
     mutations: {
-        setName(state, payLoad){
-            state.name = payLoad
-        },
         initiativeAssigned(state, payLoad){
             state.initiativeList.push(payLoad)
         },
@@ -36,8 +48,24 @@ const store = createStore({
         },
         addDeletedInit (state, payLoad) {
             state.deletedInit = payLoad.name
-            /*console.log(payLoad.name)
-            console.log(store.getters.getDeleteInit)*/
+        },
+        clearColumns(state){
+            state.columns.length = 0
+        },
+        clearRows(state){
+            state.rows.length = 0
+        },
+        rowsPush(state){
+            state.rows.push('')
+        },
+        columnsPush(state){
+            state.columns.push(state.rows)
+        },
+        ifTableWindowSwitch(state, payLoad){
+            state.ifTableWindow = payLoad
+        },
+        setFieldMapBackground(state, payLoad){
+            state.fieldMapBackground = payLoad
         }
     }
 })
