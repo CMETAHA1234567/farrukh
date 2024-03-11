@@ -7,7 +7,6 @@ const store = createStore({
         columns: [],
         rows: [],
         fieldMapBackground: 'https://celes.club/uploads/posts/2022-06/1655669027_45-celes-club-p-tekstura-travi-besshovnaya-krasivo-56.jpg',
-        ifTableWindow: true,
     },
     getters: {
        getName(state){
@@ -24,9 +23,6 @@ const store = createStore({
         },
         getRows(state){
            return state.rows
-        },
-        getIfTableWindow(state){
-           return state.ifTableWindow
         },
         getFieldMapBackground(state){
            return state.fieldMapBackground
@@ -60,9 +56,6 @@ const store = createStore({
         },
         columnsPush(state){
             state.columns.push(state.rows)
-        },
-        ifTableWindowSwitch(state, payLoad){
-            state.ifTableWindow = payLoad
         },
         setFieldMapBackground(state, payLoad){
             state.fieldMapBackground = payLoad

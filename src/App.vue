@@ -5,23 +5,13 @@ import Tracker from "@/components/tracker.vue";
 import FieldMap from "@/components/field-map.vue";
 import {ref} from "vue";
 
-/*export default {
-  name: 'App',
-  components: {
-    FieldMap,
-    Tracker,
-    Tokens,
-    Field
-  }
-}*/
-
 const mapVisible = ref(false)
 </script>
 
 <template>
   <tracker></tracker>
   <tokens></tokens>
-  <field @toggle="mapVisible = true"></field>
+  <field @toggleTrue="mapVisible = true" @toggleFalse="mapVisible = false"></field>
   <template v-if="mapVisible">
     <field-map></field-map>
   </template>

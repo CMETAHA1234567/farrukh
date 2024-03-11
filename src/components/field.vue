@@ -1,25 +1,34 @@
 <script setup>
-import {ref, watch} from 'vue';
+import {reactive, ref, watch} from 'vue';
 import {useStore} from "vuex";
 
-const store = useStore()
+const store = useStore();
+
 const columns = store.getters.getColumns;
+
 const rows = store.getters.getRows;
-const ifCreateWindow = ref(false);
-const fieldName = ref('Grass');
-const fieldWidth = ref(4);
-const fieldHeight = ref(4);
-const backImg = store.getters.getFieldMapBackground;
-const listName = `${fieldName.value} (${fieldWidth.value} X ${fieldHeight.value})`;
+
 const fields = ref([]);
+
 const currentField = ref();
 
+const ifCreateWindow = ref(false);
+
+const currentFieldSpecifications = reactive({
+  name: 'Grass',
+  width: 4,
+  height: 4,
+  background: store.getters.getFieldMapBackground,
+})
+
+const listName = ref(`${currentFieldSpecifications.name} (${currentFieldSpecifications.width} X ${currentFieldSpecifications.height})`);
+
 class Field {
-  constructor(name, width, height, img) {
-    this.name = name;
-    this.width = width;
-    this.height = height;
-    this.img = img;
+  constructor(object) {
+    this.name = listName.value;
+    this.width = object.width;
+    this.height = object.height;
+    this.img = object.background;
   }
 }
 
@@ -27,22 +36,23 @@ function createField() {
   store.commit('clearRows');
   store.commit('clearColumns');
 
-  for (let i = 0; i < fieldWidth.value; i++) {
+  for (let i = 0; i < currentFieldSpecifications.width; i++) {
     store.commit('rowsPush');
   }
-  for (let i = 0; i < fieldHeight.value; i++) {
+  for (let i = 0; i < currentFieldSpecifications.height; i++) {
     store.commit('columnsPush');
   }
 }
 
 function optionsOn() {
-  store.commit('ifTableWindowSwitch',false);
   ifCreateWindow.value = true;
   createField()
 }
-watch([fieldWidth, fieldHeight], () => {
+watch(
+    () => currentFieldSpecifications,
+    () => {
   createField()
-})
+}, {deep: true})
 
 function go() {
   createField()
@@ -50,7 +60,7 @@ function go() {
   store.commit('ifTableWindowSwitch', true);
   ifCreateWindow.value = false;
 
-  let newField = new Field(listName, fieldWidth.value, fieldHeight.value, backImg)
+  let newField = new Field(currentFieldSpecifications)
   fields.value.push(newField);
   localStorage.setItem('fields', JSON.stringify(fields.value))
 
@@ -70,15 +80,15 @@ if (key) {
 
 function onChange() {
   let field = currentField.value
-  fieldName.value = field.name;
-  fieldWidth.value = field.width;
-  fieldHeight.value = field.height;
+  currentFieldSpecifications.name = field.name;
+  currentFieldSpecifications.width = field.width;
+  currentFieldSpecifications.height = field.height;
   store.commit('setFieldMapBackground', field.img);
 }
 </script>
 
 <template>
-  <button id="optionsOn" @click="optionsOn()">
+  <button id="optionsOn" @click="optionsOn(); $emit('toggleFalse')">
     Create field
   </button>
 
@@ -93,18 +103,18 @@ function onChange() {
         </option>
       </select>
       <p>Input name:</p>
-      <input v-model="fieldName"/>
+      <input v-model="currentFieldSpecifications.name"/>
       <p>Input width:</p>
-      <input type="number" v-model="fieldWidth"/>
+      <input type="number" v-model="currentFieldSpecifications.width"/>
       <p>Input height:</p>
-      <input type="number" v-model="fieldHeight"/>
+      <input type="number" v-model="currentFieldSpecifications.height"/>
       <p>Input URL background:</p>
-      <input type="text" v-model="backImg"/>
-      <button id="optionOff" @click="go(); $emit('toggle')">GO!</button>
+      <input type="text" v-model="currentFieldSpecifications.background"/>
+      <button id="optionOff" @click="go(); $emit('toggleTrue')">GO!</button>
     </div>
     <div id="preview">
       <table id="myTablePreview"
-             :style="{backgroundImage: `url(${backImg})`,
+             :style="{backgroundImage: `url(${currentFieldSpecifications.background})`,
            width: 2 * rows.length + 'em'}">
         <tr class="str" v-for="item in columns">
           <td id="td" v-for="item in rows">
@@ -113,18 +123,6 @@ function onChange() {
       </table>
     </div>
   </div>
-
-<!--  <div id="fieldContainer" v-if="ifTableWindow">
-    <table id="myTable"
-           :style="{backgroundImage: `url(${backImg})`,
-           width: 7 * rows.length + 'em'}">
-      <tr class="str" v-for="item in columns">
-        <td v-for="item in rows">
-          <cell></cell>
-        </td>
-      </tr>
-    </table>
-  </div>-->
 </template>
 
 <style scoped>
@@ -135,18 +133,6 @@ function onChange() {
   box-shadow: -10px 5px 5px #ece4d940;
   width: 30%;
 }
-
-/*td {
-  height: 100px;
-  width: 100px;
-  border: black 1px solid;
-}
-
-#myTable {
-  background-size: 100%;
-  overflow: scroll;
-}*/
-
 button {
   background: #98a678;
   border-radius: 10px;
