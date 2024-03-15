@@ -4,16 +4,21 @@ import Tokens from "@/components/tokens.vue";
 import Tracker from "@/components/tracker.vue";
 import FieldMap from "@/components/field-map.vue";
 import {ref} from "vue";
+import FieldMapBroadcact from "@/components/field-map-broadcact.vue";
 
 const mapVisible = ref(false)
 </script>
 
 <template>
+  <button>
+    <router-link to="broadcast" target="_blank">Broadcast</router-link>
+  </button>
   <tracker></tracker>
   <tokens></tokens>
   <field @toggleTrue="mapVisible = true" @toggleFalse="mapVisible = false"></field>
   <template v-if="mapVisible">
     <field-map></field-map>
+    <field-map-broadcact></field-map-broadcact>
   </template>
 </template>
 
